@@ -1,0 +1,291 @@
+
+
+Testing varargs.c.........
+Expected: Out of bounds error
+
+Actual Result:
+Non-existing variadic called. But no error was thrown.
+varargs.c..... Done
+
+
+------------------------------------------------------------------------------------------------------------
+Testing sscanf.c.........
+Expected: No error or warning
+
+Actual Result:
+==5317== WARNING: MemorySanitizer: use-of-uninitialized-value
+    #0 0x7f993f6d04b0 in main /home/issues/script/sanitizer-issues/sscanf.c:10
+    #1 0x7f993e56bb44 (/lib/x86_64-linux-gnu/libc.so.6+0x21b44)
+    #2 0x7f993f6d018c in _start (/home/issues/script/sanitizer-issues/sscanf+0x7818c)
+
+  Uninitialized value was created by a heap allocation
+    #0 0x7f993f691323 in __interceptor_malloc /home/lurenwang/llvm-3.4/projects/compiler-rt/lib/msan/msan_interceptors.cc:855
+    #1 0x7f993e5a26a3 (/lib/x86_64-linux-gnu/libc.so.6+0x586a3)
+    #2 0x7f993e5b201b (/lib/x86_64-linux-gnu/libc.so.6+0x6801b)
+
+SUMMARY: MemorySanitizer: use-of-uninitialized-value /home/issues/script/sanitizer-issues/sscanf.c:10 main
+Exiting
+sscanf.c..... Done
+
+
+------------------------------------------------------------------------------------------------------------
+Testing aligned_alloc.c.........
+Expected: No error or warning
+
+Actual Result:
+=================================================================
+==5324==ERROR: AddressSanitizer: attempting free on address which was not malloc()-ed: 0x000001214080 in thread T0
+    #0 0x7f9504c7f527 in __interceptor_free (/usr/lib/x86_64-linux-gnu/libasan.so.1+0x54527)
+    #1 0x40074c in main /home/issues/script/sanitizer-issues/aligned_alloc.c:11
+    #2 0x7f95048a1b44 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x21b44)
+    #3 0x400658 (/home/issues/script/sanitizer-issues/aligned_alloc+0x400658)
+
+AddressSanitizer can not describe address in more detail (wild memory access suspected).
+SUMMARY: AddressSanitizer: bad-free ??:0 __interceptor_free
+==5324==ABORTING
+aligned_alloc.c..... Done
+
+
+------------------------------------------------------------------------------------------------------------
+Testing uninitialized_array.c.........
+Expected: Array out of bounds access warning or error
+
+Actual Result:
+34
+uninitialized_array.c..... Done
+
+
+------------------------------------------------------------------------------------------------------------
+Testing argv-out-of-bound.c.........
+Expected: argv out of bounds warning
+
+Actual Result:
+1 SSH_TTY=/dev/pts/0
+argv-out-of-bound.c..... Done
+
+
+------------------------------------------------------------------------------------------------------------
+Testing copy_relocation.c.........
+Expected: Out of bounds error or warning
+
+Actual Result:
+copy_relocation.c..... Done
+
+
+------------------------------------------------------------------------------------------------------------
+Testing semaphore.c.........
+Expected: Access after free error
+
+Actual Result:
+semaphore.c..... Done
+
+
+------------------------------------------------------------------------------------------------------------
+Testing tsan_false-positive.cpp.........
+Expected: 
+hi
+hi
+
+Actual Result:
+==================
+WARNING: ThreadSanitizer: data race (pid=5356)
+  Read of size 8 at 0x7d080000dfe0 by thread T2:
+    #0 std::string::size() const /usr/include/c++/4.9/bits/basic_string.h:725 (tsan_false-positive+0x000000002447)
+    #1 operator<< <char, std::char_traits<char>, std::allocator<char> > /usr/include/c++/4.9/bits/basic_string.h:2777 (tsan_false-positive+0x000000002447)
+    #2 operator() /home/issues/script/sanitizer-issues/tsan_false-positive.cpp:16 (tsan_false-positive+0x000000002447)
+    #3 _M_invoke<> /usr/include/c++/4.9/functional:1700 (tsan_false-positive+0x000000002447)
+    #4 operator() /usr/include/c++/4.9/functional:1688 (tsan_false-positive+0x000000002447)
+    #5 _M_run /usr/include/c++/4.9/thread:115 (tsan_false-positive+0x000000002447)
+    #6 <null> <null>:0 (libstdc++.so.6+0x0000000b696f)
+
+  Previous write of size 8 at 0x7d080000dfe0 by thread T1:
+    #0 operator new(unsigned long) <null>:0 (libtsan.so.0+0x0000000499f2)
+    #1 std::string::_Rep::_S_create(unsigned long, unsigned long, std::allocator<char> const&) <null>:0 (libstdc++.so.6+0x0000000bee98)
+    #2 <null> <null>:0 (libstdc++.so.6+0x0000000b696f)
+
+  Location is heap block of size 27 at 0x7d080000dfe0 allocated by thread T1:
+    #0 operator new(unsigned long) <null>:0 (libtsan.so.0+0x0000000499f2)
+    #1 std::string::_Rep::_S_create(unsigned long, unsigned long, std::allocator<char> const&) <null>:0 (libstdc++.so.6+0x0000000bee98)
+    #2 <null> <null>:0 (libstdc++.so.6+0x0000000b696f)
+
+  Thread T2 (tid=5359, running) created by main thread at:
+    #0 pthread_create <null>:0 (libtsan.so.0+0x000000047f23)
+    #1 std::thread::_M_start_thread(std::shared_ptr<std::thread::_Impl_base>) <null>:0 (libstdc++.so.6+0x0000000b6a90)
+    #2 __libc_start_main <null>:0 (libc.so.6+0x000000021b44)
+
+  Thread T1 (tid=5358, finished) created by main thread at:
+    #0 pthread_create <null>:0 (libtsan.so.0+0x000000047f23)
+    #1 std::thread::_M_start_thread(std::shared_ptr<std::thread::_Impl_base>) <null>:0 (libstdc++.so.6+0x0000000b6a90)
+    #2 __libc_start_main <null>:0 (libc.so.6+0x000000021b44)
+
+SUMMARY: ThreadSanitizer: data race /usr/include/c++/4.9/bits/basic_string.h:725 std::string::size() const
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=5356)
+  Read of size 1 at 0x7d080000dff8 by thread T2:
+    #0 fwrite <null>:0 (libtsan.so.0+0x000000043d47)
+    #1 std::basic_ostream<char, std::char_traits<char> >& std::__ostream_insert<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*, long) <null>:0 (libstdc++.so.6+0x000000097315)
+    #2 <null> <null>:0 (libstdc++.so.6+0x0000000b696f)
+
+  Previous write of size 8 at 0x7d080000dff8 by thread T1:
+    #0 operator new(unsigned long) <null>:0 (libtsan.so.0+0x0000000499f2)
+    #1 std::string::_Rep::_S_create(unsigned long, unsigned long, std::allocator<char> const&) <null>:0 (libstdc++.so.6+0x0000000bee98)
+    #2 <null> <null>:0 (libstdc++.so.6+0x0000000b696f)
+
+  Location is heap block of size 27 at 0x7d080000dfe0 allocated by thread T1:
+    #0 operator new(unsigned long) <null>:0 (libtsan.so.0+0x0000000499f2)
+    #1 std::string::_Rep::_S_create(unsigned long, unsigned long, std::allocator<char> const&) <null>:0 (libstdc++.so.6+0x0000000bee98)
+    #2 <null> <null>:0 (libstdc++.so.6+0x0000000b696f)
+
+  Thread T2 (tid=5359, running) created by main thread at:
+    #0 pthread_create <null>:0 (libtsan.so.0+0x000000047f23)
+    #1 std::thread::_M_start_thread(std::shared_ptr<std::thread::_Impl_base>) <null>:0 (libstdc++.so.6+0x0000000b6a90)
+    #2 __libc_start_main <null>:0 (libc.so.6+0x000000021b44)
+
+  Thread T1 (tid=5358, finished) created by main thread at:
+    #0 pthread_create <null>:0 (libtsan.so.0+0x000000047f23)
+    #1 std::thread::_M_start_thread(std::shared_ptr<std::thread::_Impl_base>) <null>:0 (libstdc++.so.6+0x0000000b6a90)
+    #2 __libc_start_main <null>:0 (libc.so.6+0x000000021b44)
+
+SUMMARY: ThreadSanitizer: data race ??:0 fwrite
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=5356)
+  Atomic write of size 4 at 0x7d080000dff0 by thread T2:
+    #0 __tsan_atomic32_fetch_add <null>:0 (libtsan.so.0+0x0000000209de)
+    #1 __exchange_and_add /usr/include/c++/4.9/ext/atomicity.h:49 (tsan_false-positive+0x000000002504)
+    #2 __exchange_and_add_dispatch /usr/include/c++/4.9/ext/atomicity.h:82 (tsan_false-positive+0x000000002504)
+    #3 std::string::_Rep::_M_dispose(std::allocator<char> const&) /usr/include/c++/4.9/bits/basic_string.h:246 (tsan_false-positive+0x000000002504)
+    #4 ~basic_string /usr/include/c++/4.9/bits/basic_string.h:547 (tsan_false-positive+0x000000002504)
+    #5 operator() /home/issues/script/sanitizer-issues/tsan_false-positive.cpp:16 (tsan_false-positive+0x000000002504)
+    #6 _M_invoke<> /usr/include/c++/4.9/functional:1700 (tsan_false-positive+0x000000002504)
+    #7 operator() /usr/include/c++/4.9/functional:1688 (tsan_false-positive+0x000000002504)
+    #8 _M_run /usr/include/c++/4.9/thread:115 (tsan_false-positive+0x000000002504)
+    #9 <null> <null>:0 (libstdc++.so.6+0x0000000b696f)
+
+  Previous write of size 8 at 0x7d080000dff0 by thread T1:
+    #0 operator new(unsigned long) <null>:0 (libtsan.so.0+0x0000000499f2)
+    #1 std::string::_Rep::_S_create(unsigned long, unsigned long, std::allocator<char> const&) <null>:0 (libstdc++.so.6+0x0000000bee98)
+    #2 <null> <null>:0 (libstdc++.so.6+0x0000000b696f)
+
+  Location is heap block of size 27 at 0x7d080000dfe0 allocated by thread T1:
+    #0 operator new(unsigned long) <null>:0 (libtsan.so.0+0x0000000499f2)
+    #1 std::string::_Rep::_S_create(unsigned long, unsigned long, std::allocator<char> const&) <null>:0 (libstdc++.so.6+0x0000000bee98)
+    #2 <null> <null>:0 (libstdc++.so.6+0x0000000b696f)
+
+  Thread T2 (tid=5359, running) created by main thread at:
+    #0 pthread_create <null>:0 (libtsan.so.0+0x000000047f23)
+    #1 std::thread::_M_start_thread(std::shared_ptr<std::thread::_Impl_base>) <null>:0 (libstdc++.so.6+0x0000000b6a90)
+    #2 __libc_start_main <null>:0 (libc.so.6+0x000000021b44)
+
+  Thread T1 (tid=5358, finished) created by main thread at:
+    #0 pthread_create <null>:0 (libtsan.so.0+0x000000047f23)
+    #1 std::thread::_M_start_thread(std::shared_ptr<std::thread::_Impl_base>) <null>:0 (libstdc++.so.6+0x0000000b6a90)
+    #2 __libc_start_main <null>:0 (libc.so.6+0x000000021b44)
+
+SUMMARY: ThreadSanitizer: data race ??:0 __tsan_atomic32_fetch_add
+==================
+==================
+WARNING: ThreadSanitizer: data race (pid=5356)
+  Write of size 8 at 0x7d0c0000efd8 by thread T2:
+    #0 operator delete(void*) <null>:0 (libtsan.so.0+0x0000000497b0)
+    #1 deallocate /usr/include/c++/4.9/ext/new_allocator.h:110 (tsan_false-positive+0x000000001bd5)
+    #2 deallocate /usr/include/c++/4.9/bits/alloc_traits.h:383 (tsan_false-positive+0x000000001bd5)
+    #3 _M_destroy /usr/include/c++/4.9/bits/shared_ptr_base.h:535 (tsan_false-positive+0x000000001bd5)
+    #4 <null> <null>:0 (libstdc++.so.6+0x0000000b69e1)
+
+  Previous atomic write of size 4 at 0x7d0c0000efd8 by main thread:
+    #0 __tsan_atomic32_fetch_add <null>:0 (libtsan.so.0+0x0000000209de)
+    #1 __exchange_and_add /usr/include/c++/4.9/ext/atomicity.h:49 (tsan_false-positive+0x00000000285d)
+    #2 __exchange_and_add_dispatch /usr/include/c++/4.9/ext/atomicity.h:82 (tsan_false-positive+0x00000000285d)
+    #3 std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_release() /usr/include/c++/4.9/bits/shared_ptr_base.h:146 (tsan_false-positive+0x00000000285d)
+    #4 ~__shared_count /usr/include/c++/4.9/bits/shared_ptr_base.h:666 (tsan_false-positive+0x00000000191b)
+    #5 ~__shared_ptr /usr/include/c++/4.9/bits/shared_ptr_base.h:914 (tsan_false-positive+0x00000000191b)
+    #6 ~shared_ptr /usr/include/c++/4.9/bits/shared_ptr.h:93 (tsan_false-positive+0x00000000191b)
+    #7 thread<main()::<lambda()> > /usr/include/c++/4.9/thread:138 (tsan_false-positive+0x00000000191b)
+    #8 main /home/issues/script/sanitizer-issues/tsan_false-positive.cpp:16 (tsan_false-positive+0x00000000191b)
+
+  Location is heap block of size 48 at 0x7d0c0000efd0 allocated by main thread:
+    #0 operator new(unsigned long) <null>:0 (libtsan.so.0+0x0000000499f2)
+    #1 allocate /usr/include/c++/4.9/ext/new_allocator.h:104 (tsan_false-positive+0x000000001861)
+    #2 allocate /usr/include/c++/4.9/bits/alloc_traits.h:357 (tsan_false-positive+0x000000001861)
+    #3 __shared_count<std::thread::_Impl<std::_Bind_simple<main()::<lambda()>()> >, std::allocator<std::thread::_Impl<std::_Bind_simple<main()::<lambda()>()> > >, std::_Bind_simple<main()::<lambda()>()> > /usr/include/c++/4.9/bits/shared_ptr_base.h:616 (tsan_false-positive+0x000000001861)
+    #4 __shared_ptr<std::allocator<std::thread::_Impl<std::_Bind_simple<main()::<lambda()>()> > >, std::_Bind_simple<main()::<lambda()>()> > /usr/include/c++/4.9/bits/shared_ptr_base.h:1090 (tsan_false-positive+0x000000001861)
+    #5 shared_ptr<std::allocator<std::thread::_Impl<std::_Bind_simple<main()::<lambda()>()> > >, std::_Bind_simple<main()::<lambda()>()> > /usr/include/c++/4.9/bits/shared_ptr.h:316 (tsan_false-positive+0x000000001861)
+    #6 allocate_shared<std::thread::_Impl<std::_Bind_simple<main()::<lambda()>()> >, std::allocator<std::thread::_Impl<std::_Bind_simple<main()::<lambda()>()> > >, std::_Bind_simple<main()::<lambda()>()> > /usr/include/c++/4.9/bits/shared_ptr.h:588 (tsan_false-positive+0x000000001861)
+    #7 make_shared<std::thread::_Impl<std::_Bind_simple<main()::<lambda()>()> >, std::_Bind_simple<main()::<lambda()>()> > /usr/include/c++/4.9/bits/shared_ptr.h:604 (tsan_false-positive+0x000000001861)
+    #8 _M_make_routine<std::_Bind_simple<main()::<lambda()>()> > /usr/include/c++/4.9/thread:196 (tsan_false-positive+0x000000001861)
+    #9 thread<main()::<lambda()> > /usr/include/c++/4.9/thread:138 (tsan_false-positive+0x000000001861)
+    #10 main /home/issues/script/sanitizer-issues/tsan_false-positive.cpp:16 (tsan_false-positive+0x000000001861)
+
+  Thread T2 (tid=5359, running) created by main thread at:
+    #0 pthread_create <null>:0 (libtsan.so.0+0x000000047f23)
+    #1 std::thread::_M_start_thread(std::shared_ptr<std::thread::_Impl_base>) <null>:0 (libstdc++.so.6+0x0000000b6a90)
+    #2 __libc_start_main <null>:0 (libc.so.6+0x000000021b44)
+
+SUMMARY: ThreadSanitizer: data race ??:0 operator delete(void*)
+==================
+hi
+hi
+ThreadSanitizer: reported 4 warnings
+tsan_false-positive.cpp..... Done
+
+
+------------------------------------------------------------------------------------------------------------
+Testing fno-common.c.........
+Expected: Out of bounds access error
+
+Actual Result:
+test 0
+fno-common.c..... Done
+
+
+------------------------------------------------------------------------------------------------------------
+Testing compile-time-undefined.c with -O0.........
+Expected: Use of uninitialized value warning
+
+Actual Result:
+==5368== WARNING: MemorySanitizer: use-of-uninitialized-value
+    #0 0x7fe9001734ff in main (/home/issues/script/sanitizer-issues/compile-time-undefined+0x784ff)
+    #1 0x7fe8ff00eb44 (/lib/x86_64-linux-gnu/libc.so.6+0x21b44)
+    #2 0x7fe9001731dc in _start (/home/issues/script/sanitizer-issues/compile-time-undefined+0x781dc)
+
+SUMMARY: MemorySanitizer: use-of-uninitialized-value ??:0 main
+Exiting
+
+Testing compile-time-undefined.c with -O1.........
+Expected: Use of uninitialized value warning
+
+Actual Result:
+Done
+compile-time-undefined.c..... Done
+
+
+------------------------------------------------------------------------------------------------------------
+Testing atomics-gcc.c.........
+Expected: No warning or error
+
+Actual Result:
+==================
+WARNING: ThreadSanitizer: data race (pid=5380)
+  Read of size 4 at 0x7ffe26a1d92c by main thread:
+    #0 main /home/issues/script/sanitizer-issues/atomics-gcc.cpp:25 (atomics-gcc+0x000000001734)
+
+  Previous write of size 4 at 0x7ffe26a1d92c by thread T1:
+    #0 main::{lambda()#1}::operator()() const <null>:0 (atomics-gcc+0x000000001685)
+    #1 _M_invoke<> /usr/include/c++/4.9/functional:1700 (atomics-gcc+0x000000002b61)
+    #2 operator() /usr/include/c++/4.9/functional:1688 (atomics-gcc+0x000000002a35)
+    #3 _M_run /usr/include/c++/4.9/thread:115 (atomics-gcc+0x00000000295f)
+    #4 <null> <null>:0 (libstdc++.so.6+0x0000000b696f)
+
+  Location is stack of main thread.
+
+  Thread T1 (tid=5382, finished) created by main thread at:
+    #0 pthread_create <null>:0 (libtsan.so.0+0x000000047f23)
+    #1 std::thread::_M_start_thread(std::shared_ptr<std::thread::_Impl_base>) <null>:0 (libstdc++.so.6+0x0000000b6a90)
+    #2 main /home/issues/script/sanitizer-issues/atomics-gcc.cpp:22 (atomics-gcc+0x00000000171c)
+
+SUMMARY: ThreadSanitizer: data race /home/issues/script/sanitizer-issues/atomics-gcc.cpp:25 main
+==================
+ThreadSanitizer: reported 1 warnings
+atomics-gcc.c..... Done
